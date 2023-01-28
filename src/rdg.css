@@ -1,0 +1,30 @@
+.rdg-header-row {
+  background-color: white;
+  color: black;
+}
+
+.rdg-row {
+  background-color: white;
+  color: black;
+}
+
+.rdg-header-row > .rdg-cell {
+  border-inline-end: none;
+  border-block-end: 1px solid #dfdfdf;
+}
+.rdg-header-row > .rdg-cell:before {
+  content: "";
+  position: absolute;
+  left: 0; 
+  top: .25rem;
+  height: 80%;
+  border-inline-end: 1px solid #aaaaaa;
+}
+.rdg-header-row > .rdg-cell:first-child:before, .rdg-cell:nth-child(2):before {
+  border-inline-end: none;
+}
+
+.rdg-row > .rdg-cell {
+  border-inline-end: none;
+  border-block-end: 1px solid #dfdfdf;
+}

@@ -15,7 +15,7 @@
 .rdg-header-row > .rdg-cell:before {
   content: "";
   position: absolute;
-  left: 0; 
+  left: 0;
   top: .25rem;
   height: 80%;
   border-inline-end: 1px solid #aaaaaa;
@@ -27,4 +27,18 @@
 .rdg-row > .rdg-cell {
   border-inline-end: none;
   border-block-end: 1px solid #dfdfdf;
+}
+
+.select-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem;
+}
+.select-cell input {
+  margin: 0;
+}
+.select-cell-label {
+  width: 100%;
+  height: 100%;
 }

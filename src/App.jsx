@@ -9,8 +9,9 @@ import { exportToExcel, exportToCsv } from './exportUtils';
 
 export default () => {
   // prepare columns
+  const emptyRenderer = () => <></>;
   const columns = [
-    SelectColumn,
+    { ...SelectColumn, headerRenderer: emptyRenderer, cellClass: "select-cell" },
     { key: "id", name: "ID", resizable: true },
     { key: "title", name: "Title", resizable: true },
   ];
@@ -56,17 +57,16 @@ export default () => {
     const handleChange = (event) => {
       onChange(event.target.checked, event.nativeEvent.shiftKey);
     };
-    return <input type="checkbox" ref={ref} {...props} onChange={handleChange} />;
+    return (
+      <label className="select-cell-label">
+        <input type="checkbox" ref={ref} {...props} onChange={handleChange} />
+      </label>
+    );
   };
 
-  // filtering button
+  // filtering
   const [isFiltered, setIsFiltered] = useState(false);
-  const handleFilterClick = () => {
-    console.log("Filter");
-    console.log(selectedRows);
-    setIsFiltered(!isFiltered);
-  };
-
+  const handleFilter = () => setIsFiltered(!isFiltered);
   const filteredRows = useMemo(() => {
     if (!isFiltered) {
       return rows;
@@ -88,19 +88,19 @@ export default () => {
   );
 
   // export button
-  const handleExportExcelClick = () => {
+  const handleExportExcel = () => {
     exportToExcel(gridElement, "test.xlsx");
   };
-  const handleExportCsvClick = () => {
+  const handleExportCsv = () => {
     exportToCsv(gridElement, "test.csv");
   };
 
   return (
     <div>
       <div style={{ textAlign: "end" }}>
-        <input type="button" style={{ margin: "2px" }} value="Filter" onClick={handleFilterClick} />
-        <input type="button" style={{ margin: "2px" }} value="Export xls" onClick={handleExportExcelClick} />
-        <input type="button" style={{ margin: "2px", marginRight: "6px" }} value="Export csv" onClick={handleExportCsvClick} />
+        <input type="button" style={{ margin: "2px" }} value="Filter" onClick={handleFilter} />
+        <input type="button" style={{ margin: "2px" }} value="Export xls" onClick={handleExportExcel} />
+        <input type="button" style={{ margin: "2px", marginRight: "6px" }} value="Export csv" onClick={handleExportCsv} />
       </div>
       {gridElement}
     </div>

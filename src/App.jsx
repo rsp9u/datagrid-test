@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 
 import 'react-data-grid/lib/styles.css';
 import DataGrid, { SelectColumn } from 'react-data-grid';
 import './rdg.css';
+import { exportToExcel, exportToCsv } from './exportUtils';
 
 export default () => {
   // prepare columns
@@ -40,7 +41,7 @@ export default () => {
   };
   const [isLoading, setIsLoading] = useState(false);
   const handleScroll = async (event) => {
-    if (isLoading || !isAtBottom(event)) {
+    if (isLoading || isFiltered || !isAtBottom(event)) {
       return;
     }
 
@@ -50,15 +51,58 @@ export default () => {
     setIsLoading(false);
   };
 
-  return (
+  // checkbox style change
+  const checkboxFormatter = ({ onChange, ...props }, ref) => {
+    const handleChange = (event) => {
+      onChange(event.target.checked, event.nativeEvent.shiftKey);
+    };
+    return <input type="checkbox" ref={ref} {...props} onChange={handleChange} />;
+  };
+
+  // filtering button
+  const [isFiltered, setIsFiltered] = useState(false);
+  const handleFilterClick = () => {
+    console.log("Filter");
+    console.log(selectedRows);
+    setIsFiltered(!isFiltered);
+  };
+
+  const filteredRows = useMemo(() => {
+    if (!isFiltered) {
+      return rows;
+    }
+    return rows.filter((r) => selectedRows.has(r.id));
+  }, [rows, selectedRows, isFiltered]);
+
+  // data-grid element
+  const gridElement = (
     <DataGrid
       columns={columns}
-      rows={rows}
+      rows={filteredRows}
       selectedRows={selectedRows}
       onSelectedRowsChange={setSelectedRows}
       onScroll={handleScroll}
       rowKeyGetter={(row) => row.id}
-      className="rdg-root"
+      renderers={{ checkboxFormatter }}
     />
+  );
+
+  // export button
+  const handleExportExcelClick = () => {
+    exportToExcel(gridElement, "test.xlsx");
+  };
+  const handleExportCsvClick = () => {
+    exportToCsv(gridElement, "test.csv");
+  };
+
+  return (
+    <div>
+      <div style={{ textAlign: "end" }}>
+        <input type="button" style={{ margin: "2px" }} value="Filter" onClick={handleFilterClick} />
+        <input type="button" style={{ margin: "2px" }} value="Export xls" onClick={handleExportExcelClick} />
+        <input type="button" style={{ margin: "2px", marginRight: "6px" }} value="Export csv" onClick={handleExportCsvClick} />
+      </div>
+      {gridElement}
+    </div>
   );
 };

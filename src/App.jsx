@@ -12,8 +12,8 @@ export default () => {
   const emptyRenderer = () => <></>;
   const columns = [
     { ...SelectColumn, headerRenderer: emptyRenderer, cellClass: "select-cell" },
-    { key: "id", name: "ID", resizable: true },
-    { key: "title", name: "Title", resizable: true },
+    { key: "id", name: "ID", resizable: true, width: 80 },
+    { key: "title", name: "Title", resizable: true, width: 180 },
   ];
 
   // prepare rows
@@ -74,6 +74,17 @@ export default () => {
     return rows.filter((r) => selectedRows.has(r.id));
   }, [rows, selectedRows, isFiltered]);
 
+  // resize column
+  const timers = {}
+  const handleColumnResize = (column, width) => {
+    if (timers[column] !== undefined) {
+      clearTimeout(timers[column]);
+    }
+    timers[column] = setTimeout(() => {
+      console.log(column, width);
+    }, 500);
+  };
+
   // data-grid element
   const gridElement = (
     <DataGrid
@@ -82,6 +93,7 @@ export default () => {
       selectedRows={selectedRows}
       onSelectedRowsChange={setSelectedRows}
       onScroll={handleScroll}
+      onColumnResize={handleColumnResize}
       rowKeyGetter={(row) => row.id}
       renderers={{ checkboxFormatter }}
     />
